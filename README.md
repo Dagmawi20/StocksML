@@ -13,7 +13,7 @@
 ## Results
 #### The prdeiction we got based on this data gave us an error value of around 6 which could use ome improvement.
 
-![Stock Prediction Graphed](\images\prediction graph results.PNG)
+![Stock Prediction Graphed](\images\prediction-graph-results.PNG)
 
 
 #### By using our data to precidt a future value we got these results.
