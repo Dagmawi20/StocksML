@@ -4,7 +4,7 @@
 ### We can use a Long Short Term Memory Neural network to make predictions on a specific stock
 
 ## Running the file
-#### make sure to pip install any libraries that your machine might not alread have
+#### Make sure to pip install any libraries that your machine might not alread have
 
 #### You can also change the Stock you would like to use the model on as well as change the corressponding timeframe of the stock prices.
 
