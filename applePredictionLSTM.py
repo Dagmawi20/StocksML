@@ -119,8 +119,8 @@ future_test = np.reshape(future_test,(future_test.shape[0],future_test.shape[1],
 #use our model
 prediction_prices = model.predict(future_test)
 prediction_prices = scaler.inverse_transform(prediction_prices)
-print(prediction_prices)
+print("Price on 9/20/2021 based on LSTM model: ",prediction_prices)
 
 #correct Price
 future_prices_check = pdr.get_data_yahoo('AAPL', start='2021-09-19', end='2021-09-23')
-print(future_prices_check['Close'][0])
+print("Actual price on 9/20/2021 according to Yahoo Finance: ",future_prices_check['Close'][0])
