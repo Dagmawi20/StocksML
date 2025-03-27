@@ -2,18 +2,21 @@ import math
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense,LSTM
 import matplotlib.pyplot as plt
 from pandas_datareader import data as pdr
 import yfinance as yfin
 
-yfin.pdr_override()
+
+
+#yfin.pdr_override()
 
 #get stock data of Apple from 01/01/2019 to 09/17/2021
-df = pdr.get_data_yahoo('AAPL', start='2019-01-01', end='2021-09-17')
+df = yfin.download('AAPL', start='2019-01-01', end='2021-09-17')
 # find thape of our dataframe of Apple stock
-print(df.shape)
+#display(df)
 #plot the closing price of Apple over our given time period
 plt.figure(figsize=(16,8))
 plt.title('AAPL closing price history')
@@ -23,9 +26,9 @@ plt.ylabel('Closing Price in USD', fontsize = 18)
 
 
 #split our df to create new df of only closing column
-close_price_df = df.filter(['Close'])
+close_price_df = df['Close']
+display(close_price_df)
 dataset_cp_df = close_price_df.values
-print(len(dataset_cp_df))
 
 #number of rows allows for us to train the LSTM model using 80% of our data
 training_data_size = math.ceil(len(dataset_cp_df)*.80)
@@ -33,9 +36,9 @@ training_data_size = math.ceil(len(dataset_cp_df)*.80)
 # scale the closing price data, preprocssing transformation to input before adding to neural network
 # range is between 0 and 1 inclusive
 scaler = MinMaxScaler(feature_range=(0,1))
+#print(scaler)
 #transform data using scaler, 
 scaled_data = scaler.fit_transform(dataset_cp_df)
-
 # create scaled training data set
 train_data = scaled_data[0:training_data_size,:]
 #split data into x_train and y_train data sets
@@ -53,12 +56,12 @@ x_train, y_train = np.array(x_train),np.array(y_train)
 
 #reshape x_train so LSTM expects 3D data and we are in a 2D data form
 x_train = np.reshape(x_train,(x_train.shape[0],x_train.shape[1],1))
-print(x_train.shape)
-
+#print(x_train.shape)
+print(x_train.shape[1],x_train.shape[2])
 #build LSTM model
 model = Sequential()
-model.add(LSTM(50,return_sequences=True,input_shape = (x_train.shape[1],1)))
-model.add(LSTM(50,return_sequences=False))
+model.add(LSTM(50,return_sequences=True,input_shape=(x_train.shape[1],1)))
+model.add(LSTM(units=50,return_sequences=False))
 model.add(Dense(25))
 model.add(Dense(1))
 
@@ -90,15 +93,16 @@ predictions = scaler.inverse_transform(predictions)
 rmse = np.sqrt(np.mean(predictions-y_test)**2)
 print(rmse)
 
-#plot data 
+display(close_price_df)
 train = close_price_df[:training_data_size]
+
 valid = close_price_df[training_data_size:]
 valid['Predictions']= predictions
 plt.figure(figsize=(16,8))
 plt.title('LSTM model predictions')
 plt.xlabel('Date',fontsize=18)
 plt.ylabel('Close Prices in USD',fontsize = 18)
-plt.plot(train['Close'])
+plt.plot(train.loc['Close'])
 plt.plot(valid[['Close','Predictions']])
 plt.legend(['Train','Validation','Predictions'],loc ='lower right')
 plt.show()
